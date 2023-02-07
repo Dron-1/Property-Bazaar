@@ -2,6 +2,7 @@ import { useState } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import { ReactComponent as ArrowRightIcon } from "../assets/svg/keyboardArrowRightIcon.svg"
 import visibilityIcon from "../assets/svg/visibilityIcon.svg"
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
 
 function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
@@ -21,6 +22,25 @@ function SignIn() {
     }))                                //target id must be same as object property
   }
 
+  const onSubmit = async (e) => {
+    e.preventDefault()
+
+    try{
+      const auth = getAuth()
+
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+
+      if(userCredential.user)
+      {
+        navigate('/');
+      }
+    }
+    catch(error)
+    {
+      console.log("Error while sign-in--------------\n",error)
+    }
+  }
+
   return (
     <>
       <div className="pageContainer">
@@ -29,7 +49,7 @@ function SignIn() {
             Welcome Back! 
           </p>
         </header>
-        <form>
+        <form onSubmit={onSubmit}>
           <input 
             type="email" 
             id="email" 
